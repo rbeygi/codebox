@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: codebox-configmap
+data:
+  PGUSER: "codebox_user"
+  PGPASSWORD: "QWEqwe123"
+  PGDATABASE: "codebox_dev"
+  PGPORT: "5432"
+  PGHOST: "localhost"

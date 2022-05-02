@@ -1,0 +1,23 @@
+FROM alpine:3.15
+
+RUN apk --update add erlang elixir && rm -rf /var/cache/apk/*
+
+RUN mkdir app
+WORKDIR app
+
+COPY code .
+
+RUN mix local.hex --force
+RUN mix local.rebar --force
+ENV HEX_HTTP_CONCURRENCY=1
+ENV HEX_HTTP_TIMEOUT=120
+
+RUN mix deps.get --only prod
+RUN mix deps.compile
+RUN mix deps.clean bcrypt_elixir
+
+RUN mix ecto.create
+RUN mix ecto.migrate
+
+ENTRYPOINT [ "iex" ]
+CMD [ "-S", "mix", "phx.server"]

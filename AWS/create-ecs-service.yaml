@@ -1,0 +1,26 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "CloudFormation creating ECS service"
+Resources:
+  CodeBoxECSService:
+      Type: AWS::ECS::Service
+      Properties:
+        LaunchType: FARGATE
+        Cluster:
+          Ref: "CodeBoxECSCluster"
+        DesiredCount: 4
+        TaskDefinition:
+          Ref: "CodeBoxTaskDefinition"
+        DeploymentConfiguration:
+          MaximumPercent: 100
+          MinimumHealthyPercent: 0
+        NetworkConfiguration:
+          AwsvpcConfiguration:
+            AssignPublicIp: ENABLED
+            SecurityGroups:
+              - !GetAtt Alb2FargateContainers.GroupId
+            Subnets: ['subnet-580b0331','subnet-7102210a','subnet-c40f7b89']
+        LoadBalancers:
+          - TargetGroupArn:
+              Ref: CodeBoxTargetGroup
+            ContainerPort: 4000
+            ContainerName: codebox-dev

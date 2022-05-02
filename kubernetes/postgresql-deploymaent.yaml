@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: postgres
+    template:
+      metadata:
+        labels:
+          app: postgres
+      spec:
+        volumes:
+          - name: postgres-pv-storage
+            persistentVolumeClaim:
+            claimName: postgres-pv-claim
+        containers:
+          - name: postgres
+            image: postgres:11
+            ports:
+              - containerPort: 5432
+            env:
+              - name: POSTGRESQL_ENV
+                  valueFrom:
+                  configMapKeyRef:
+                    name: pgsql-configmap
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  labels:
+    app: postgres
+spec:
+  type: NodePort
+  selector:
+    app: postgres
+  ports:
+    - port: 5432

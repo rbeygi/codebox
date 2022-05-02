@@ -1,0 +1,14 @@
+version: 0.2phases:
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
+  build:
+    commands:
+      - docker build -t codebox:dev .
+      - docker tag codebox:dev 27673333333.dkr.ecr.us-east-1.amazonaws.com/codebox
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - echo Pushing the Docker image...
+      - docker push 27673333333.dkr.ecr.us-east-1.amazonaws.com/codebox

@@ -1,0 +1,14 @@
+FROM ubuntu:focal
+
+SHELL [ "/bin/bash", "-c" ]
+
+RUN apt-get update && apt-get install git curl -y
+
+RUN git config --global advice.detachedHead false && \
+    git clone https://github.com/asdf-vm/asdf.git /root/.asdf --branch v0.10.0 && \
+    echo "source /root/.asdf/asdf.sh" >> /root/.bashrc
+
+RUN export PATH="$HOME/.asdf/bin:$HOME/.asdf/shims:$PATH" && \
+    source /root/.bashrc && \
+    asdf plugin add erlang https://github.com/asdf-vm/asdf-erlang.git && \
+    asdf plugin add elixir https://github.com/asdf-vm/asdf-elixir.git
